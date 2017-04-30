@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Simple CNN model for CIFAR-10
 import numpy
 import argparse
@@ -45,7 +46,7 @@ X_test.reshape((-1, 64, 64, 3))
 
 # Create the model
 model = Sequential()
-model.add(Conv2D(100, (3, 3), input_shape=(32, 32, 3), padding='same', activation='relu', kernel_constraint=maxnorm(3)))
+model.add(Conv2D(100, (3, 3), input_shape=(32, 32, 3), padding='same', activation='elu', kernel_constraint=maxnorm(3)))
 model.add(Dropout(0.2))
 model.add(Conv2D(100, (3, 3), activation='elu', padding='same', kernel_constraint=maxnorm(3)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -60,9 +61,10 @@ decay = lrate/epochs
 sgd = SGD(lr=lrate, momentum=0.9, decay=decay, nesterov=False)
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 print(model.summary())
-plot_model(model, to_file='model_dnn64_elu.png')
-model.save_weights('cifar10_32_elu')
-json_string = model.to_json()
+#plot_model(model, to_file='model_dnn64_elu.png')
+#saave
+#model.save_weights('cifar10_32_elu')
+#json_string = model.to_json()
 # Fit the model
 model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=epochs, batch_size=100)
 # Final evaluation of the model
