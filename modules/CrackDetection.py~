@@ -20,7 +20,6 @@ def markDetected(mat,loc):
 
 def onlinePrediction(self,model,source=0, show_source=True, output='output.avi'):
     cap = cv2.VideoCapture(0)
-    h,w=cap.get(3),cap.get(4)
 	if source: #source != 0
 		fps=cap.get(7)
 		T=int(1000/fps)
@@ -29,7 +28,7 @@ def onlinePrediction(self,model,source=0, show_source=True, output='output.avi')
 		T=int(1000/30)
 		
 	fourcc = cv2.VideoWriter_fourcc(*'XVID')# I want .h264. Maybe parameterize
-	out = cv2.VideoWriter(output,fourcc, fps, (h,w)) #Thread 3
+	out = cv2.VideoWriter(output,fourcc, fps, (640,480)) #Thread 3
 	#thread inits?
 	cv2.namedWindow('Predictor Output')
 	cv2.namedWindow('Source Video')
@@ -48,13 +47,13 @@ def onlinePrediction(self,model,source=0, show_source=True, output='output.avi')
         	processed=markDetected(rawframe,loc)
         else: #potentiall combine these  in mark detected.
 			processed=rawframe ### THIS IS NOT HIS FINAL FORM. ineffective
-        	cv2.putText(processed, 'X', (w-20,h-10), cv2.HERSHEY_PLAIN, 2, (255,0,0))
+        	cv2.putText(processed, 'X', (), cv2.HERSHEY_PLAIN, 2, (255,0,0))
         	
         cv2.imshow('Predictor Output',marked)
         # Thread 2:
         cv2.imshow('Source Video',rawframe)
        	# Thread 3? (or 1):
-       	output.write(processed)
+       	out.write(frame)
        	
         if cv2.waitKey(T/2) & 0xFF == ord('q'):
           break
