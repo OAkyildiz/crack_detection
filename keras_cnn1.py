@@ -17,7 +17,7 @@ from keras import backend as K
 from keras.utils import plot_model
 from keras.utils.vis_utils import model_to_dot
 
-ftype = 'float16'
+ftype = 'float32'
 #ftype ='float64'
 
 #K.set_image_dim_ordering('th')
