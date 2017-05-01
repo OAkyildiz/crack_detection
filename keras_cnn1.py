@@ -17,12 +17,12 @@ from keras import backend as K
 from keras.utils import plot_model
 from keras.utils.vis_utils import model_to_dot
 
-ftype = 'float32'
+ftype = 'float16'
 #ftype ='float64'
 
 #K.set_image_dim_ordering('th')
 
-K.set_floatx('float32')
+K.set_floatx(ftype)
 # fix random seed for reproducibility
 seed = 24
 numpy.random.seed(seed)
