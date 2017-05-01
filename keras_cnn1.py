@@ -46,12 +46,12 @@ X_test.reshape((-1, 64, 64, 3))
 
 # Create the model
 model = Sequential()
-model.add(Conv2D(100, (3, 3), input_shape=(32, 32, 3), padding='same', activation='elu', kernel_constraint=maxnorm(3)))
+model.add(Conv2D(100, (3, 3), input_shape=(32, 32, 3), padding='same', activation='relu', kernel_constraint=maxnorm(3)))
 model.add(Dropout(0.2))
-model.add(Conv2D(100, (3, 3), activation='elu', padding='same', kernel_constraint=maxnorm(3)))
+model.add(Conv2D(100, (3, 3), activation='relu', padding='same', kernel_constraint=maxnorm(3)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
-model.add(Dense(512, activation='elu', kernel_constraint=maxnorm(3)))
+model.add(Dense(512, activation='relu', kernel_constraint=maxnorm(3)))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 # Compile model
