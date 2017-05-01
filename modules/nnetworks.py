@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import keras.layers
+import sys
+
 from keras.models import Sequential
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers import *
@@ -56,3 +58,13 @@ def zhang_network(nc,b=48,h=99,w=99,fn='relu'):
     model.add(Dense(nc, activation='softmax'))
 
     return model
+
+def saveModelJSON(model, name, path='models/'):
+    jsonfile=open(path+name,w)
+    jsonfile.write(model.to_json())
+
+def modelFromData():
+    #load json
+    model = model_from_json(json_string)
+    #load data
+    model.load_weights('my_model_weights.h5')

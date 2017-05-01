@@ -2,12 +2,13 @@
 
 #import numpy as np
 import cv2
+import numpy as np
 import threading
 from os import getcwd
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+#from keras.models import Sequential
+#from keras.layers import Dense, Dropout, Activation, Flatten
+#from keras.layers import Conv2D, MaxPooling2D
 
 def predictWithModel(model,frame):
 
@@ -21,28 +22,31 @@ def markDetected(mat,loc):
 
 def onlinePrediction(model,source=0, show_source=True, output='output.avi'):
   cap = cv2.VideoCapture(source)
+  print(cap)
   h,w=int(cap.get(3)),int(cap.get(4))
   #source != 0
   if source:
     fps=cap.get(7)
-    T=int(1000/fps) if fps else 30
+    T=1000//fps if fps else 25
   else:
     fps=30
-    T=int(1000/30)
+    T=1000//30
 
-  fourcc = cv2.VideoWriter_fourcc(*'XVID')# I want .h264. Maybe parameterize
-  out = cv2.VideoWriter(output,fourcc, fps, (h,w)) #Thread 3, #rename out,output
+  #fourcc = cv2.VideoWriter_fourcc(*'X264')# I want .h264. Maybe parameterize
+  #out = cv2.VideoWriter(output,fourcc, fps, (h,w)) #Thread 3, #rename out,output
   #thread inits?
-  cv2.namedWindow('Predictor Output')
-  cv2.namedWindow('Source Video')
-  cv2.moveWindow('Predictor Output', 800, 0)
+  #cv2.namedWindow('Predictor Output')
+  #cv2.namedWindow('Source Video')
+  #cv2.moveWindow('Predictor Output', 800, 0)
 
-  #
+  #You didnt think of multiple detections!
 
   while(True):
     # Capture frame-by-frame
     ret, rawframe = cap.read()
-    if ret==True:
+    from os import listdir
+    print(listdir('.'))
+    if ret:
         # Thread 1:
         #lbl, loc=predictWithModel(rawframe)
         lbl=False
@@ -56,14 +60,16 @@ def onlinePrediction(model,source=0, show_source=True, output='output.avi'):
         # Thread 2:
         cv2.imshow('Source Video',rawframe)
          # Thread 3? (or 1):
-        out.write(processed)
+        #out.write(processed)
 
-        if cv2.waitKey(int(1)) & 0xFF == ord('q'):
+        if cv2.waitKey(int(25)) & 0xFF == ord('q'):
           break
+    else:
+        break
 
         # When everything done, release the capture
   cap.release()
-  out.release()
+  #out.release()
   cv2.destroyAllWindows()
 
 ##    cv2.moveWindow
@@ -73,7 +79,7 @@ def onlineMultiModelPrediciton():
   pass
 
 def main():
-  vid='/home/oakyildiz/workspaces/directed_research/crack_detection/target_data/cracks_test_vid.mp4'
+  vid='berlin2.mp4'
   onlinePrediction(0,vid)
 
 if __name__ == "__main__":
