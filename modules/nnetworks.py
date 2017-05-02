@@ -26,6 +26,48 @@ def help():
 #                                   bias_initializer='zeros', kernel_regularizer=None,
 #                                   bias_regularizer=None, activity_regularizer=None,
 #                                   kernel_constraint=None, bias_constraint=None)
+
+#def flex_get(): need this for a network constructor of simple and complex designs
+
+#LayerTypes{'I','C','Cr','Do','M','F','D','O'}
+# A pythonic way would be actuall kv pairs with references to layer constructors
+
+#Lazy mode on: please start with I and end with O.
+# I will implement checking first/last iter later.
+#also has the potetial to be a @classmethod
+def modelmaker(name,nc, layers,b, sz,k=3,a_fn='relu',dr=.3, mp=2,den,fc_scale=2,cr=2):
+  model = Sequential()
+  for ly in layers:
+      if(ly='I'):
+          model.add(Conv2D(b, (k, k), input_shape=(sz, sz, 3),
+           padding='same', activation=a_fn, kernel_constraint=maxnorm(3)))
+
+      elif(ly='C'):
+          model.add(Conv2D(b, (k, k), activation=a_fn, padding='same', kernel_constraint=maxnorm(3)))
+      elif(ly='Do'):
+          model.add(Dropout(dr))
+      elif(ly='D'):
+          model.add(Dense(den, activation=fn[2], kernel_constraint=maxnorm(3)))
+          den//=fc_scale
+      elif(ly='M'):
+          model.add(MaxPooling2D(pool_size=(mp, mp)))
+          #sz//=mp
+      elif(ly='Cr'):
+          model.add(Cropping2D(cropping=((cr, cr), (cr, cr))))
+      elif(ly='F'):
+          model.add(Flatten())
+
+      elif(ly='O'):
+          model.add(Dense(nc, activation='softmax)
+
+      saveModelJSON(model, 'dr_nn1')
+      return model
+
+
+@staticmethod
+def cnn2():
+    return modelmaker('cnn2',['I','C','M','M','Cr','F','D','D','O'],64,64)
+
 def cifar_network(nc,b=100,h=32,w=32, k=3, fn=['relu','relu','relu','softmax']):
     model = Sequential()
     model.add(Conv2D(b, (k, k), input_shape=(h, w, 3), padding='same', activation=fn[0], kernel_constraint=maxnorm(3)))
@@ -44,27 +86,71 @@ def cifar_network(nc,b=100,h=32,w=32, k=3, fn=['relu','relu','relu','softmax']):
 def zhang_network(nc,b=48,h=99,w=99,fn='relu'):
     #add dropouts
     model = Sequential()
-    model.add(Conv2D(b, (4, 4), input_shape=(96, 96, 3)))
-    model.add(Conv2D(b, (4, 4), input_shape=(96, 96, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Conv2D(b, (4, 4), input_shape=(99, 99, 3)))
+    model.add(Cropping2D(cropping=((2, 1), (1, 2))))
+    model.add(Conv2D(b, (4, 4), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     #flatten here?
-    model.add(Conv2D(b, (5, 5), input_shape=(44, 44, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Cropping2D(cropping=((2, 2), (2, 2))))
+    model.add(Conv2D(b, (5, 5), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(b, (3, 3), input_shape=(18, 18, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Cropping2D(cropping=((2, 2), (2, 2))))
+    model.add(Conv2D(b, (3, 3), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(b, (4, 4), input_shape=(6, 6, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Cropping2D(cropping=((2, 1), (1, 2))))
+    model.add(Conv2D(b, (4, 4), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dense(200, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dense(nc, activation='softmax'))
 
     return model
 
-def saveModelJSON(model, name, path='models/'):
+
+#A ModelFactory would be nice
+#def dr_network(name,nc=2,b=48,h=99,w=99,fn='relu'):
+def dr_network():
+    #add dropouts
+    model = Sequential()
+    model.add(Conv2D(b, (4, 4), input_shape=(64, 64, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    #flatten here?
+    model.add(Conv2D(b, (5, 5), input_shape=(28, 28, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(b, (3, 3), input_shape=(12, 12, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Conv2D(b, (2, 2), input_shape=(4, 4, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.33))
+    model.add(Dense(200, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Dense(nc, activation='softmax'))
+
+    saveModelJSON(model, 'dr_nn1')
+    return model
+
+
+def saveModelJSON(model, name, path='../models/'):
     jsonfile=open(path+name,w)
     jsonfile.write(model.to_json())
 
-def modelFromData():
+def modelFromData(jsonfile, weights):
     #load json
     model = model_from_json(json_string)
-    #load data
-    model.load_weights('my_model_weights.h5')
+    if weights:
+        model.load_weights(file)
+    return model
+
+
+    # li = iter(object_list)
+    #
+    # obj = next(li)
+    #
+    # do_first_thing_with(obj)
+    #
+    # while True:
+    #     try:
+    #         do_something_with(obj)
+    #         obj = next(li)
+    #     except StopIteration:
+    #         do_final_thing_with(obj)
+    #         break
+    #
