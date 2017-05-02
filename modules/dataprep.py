@@ -43,10 +43,10 @@ from keras.preprocessing.image import ImageDataGenerator
     #  rescale=None,
     #  preprocessing_function=None,
     #  data_format=K.image_data_format()
- 
-test_datagen = ImageDataGenerator(rescale=1./255,)
 
-train_prep_gen = ImageDataGenerator(
+ready_gen = ImageDataGenerator(rescale=1./255,)
+
+prep_gen = ImageDataGenerator(
  rescale=1./255,
         rotation_range=40,
         width_shift_range=0.2,
@@ -61,27 +61,17 @@ train_prep_gen = ImageDataGenerator(
 # this is the augmentation configuration we will use for testing:
 # only rescaling
 
-train_data_dir = 'data/train'
-validation_data_dir = 'data/validation'
-nb_train_samples = 2000
-nb_validation_samples = 800
-epochs = 50
-batch_size = 16
 
 
-def MakeBinaryTrainGen(self,dir, d,b):
- return prep_gen.flow_from_directory(
+
+def MakeBinaryTrainGen(gen,dir, d,b):
+ return gen.flow_from_directory(
     dir,
     target_size=(d,d),
     batch_size=b,
     class_mode='binary')
 
-validation_generator = test_datagen.flow_from_directory(
-    validation_data_dir,
-    target_size=(img_width, img_height),
-    batch_size=batch_size,
-    class_mode='binary')
-
+def FitGen(model,)
 model.fit_generator(
     train_generator,
     steps_per_epoch=nb_train_samples // batch_size,
