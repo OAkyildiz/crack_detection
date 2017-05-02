@@ -16,7 +16,7 @@ def predictWithModel(model,frame):
   labels=model.predict_on_batch(x)
   print(labels)
   return lbl, loc
-
+  #row/col conversion
 def markDetected(mat,loc):
   # Python: cv2.rectangle(img, pt1, pt2, color[, thickness[, lineType[, shift]]])  None
   pass
@@ -29,7 +29,7 @@ def onlinePrediction(model,source=0, show_source=True, output='output.avi'):
     fps=cap.get(7)
   else:
     fps=30
-    
+
   T=1000//fps if fps else 25
   fourcc = cv2.VideoWriter_fourcc(*'X264')# I want .h264. Maybe parameterize
   out = cv2.VideoWriter(output,fourcc, fps, (h,w)) #Thread 3, #rename out,output

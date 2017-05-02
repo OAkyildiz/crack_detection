@@ -2,7 +2,7 @@
 
 from nnetworks import *
 from keras.optimizers import SGD
-from keras.metrics import categorical_accuracy
+from keras.metrics import binary_accuracy
 
 seed = 7
 

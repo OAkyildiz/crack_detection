@@ -7,7 +7,11 @@ from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers import *
 from keras.constraints import maxnorm
 
+from keras.optimizers import SGD
+from keras.metrics import binary_accuracy
+
 from keras import backend as K
+from keras.preprocessing.image import ImageDataGenerator
 
 key={'nc':'number of classes',
      'b':'batch_size',
@@ -35,33 +39,33 @@ def help():
 #Lazy mode on: please start with I and end with O.
 # I will implement checking first/last iter later.
 #also has the potetial to be a @classmethod
-def modelmaker(name,nc, layers,b, sz,k=3,a_fn='relu',dr=.3, mp=2,den,fc_scale=2,cr=2):
+def modelmaker(name,nc, layers,b, sz,k=3,a_fn='relu',dr=.3, mp=2,den=200,fc_scale=2,cr=2):
   model = Sequential()
   for ly in layers:
-      if(ly='I'):
-          model.add(Conv2D(b, (k, k), input_shape=(sz, sz, 3),
-           padding='same', activation=a_fn, kernel_constraint=maxnorm(3)))
+    if(ly=='I'):
+        model.add(Conv2D(b, (k, k), input_shape=(sz, sz, 3),
+         padding='same', activation=a_fn, kernel_constraint=maxnorm(3)))
 
-      elif(ly='C'):
-          model.add(Conv2D(b, (k, k), activation=a_fn, padding='same', kernel_constraint=maxnorm(3)))
-      elif(ly='Do'):
-          model.add(Dropout(dr))
-      elif(ly='D'):
-          model.add(Dense(den, activation=fn[2], kernel_constraint=maxnorm(3)))
-          den//=fc_scale
-      elif(ly='M'):
-          model.add(MaxPooling2D(pool_size=(mp, mp)))
-          #sz//=mp
-      elif(ly='Cr'):
-          model.add(Cropping2D(cropping=((cr, cr), (cr, cr))))
-      elif(ly='F'):
-          model.add(Flatten())
+    elif(ly=='C'):
+        model.add(Conv2D(b, (k, k), activation=a_fn, padding='same', kernel_constraint=maxnorm(3)))
+    elif(ly=='Do'):
+        model.add(Dropout(dr))
+    elif(ly=='D'):
+        model.add(Dense(den, activation=fn[2], kernel_constraint=maxnorm(3)))
+        den//=fc_scale
+    elif(ly=='M'):
+        model.add(MaxPooling2D(pool_size=(mp, mp)))
+        #sz//=mp
+    elif(ly=='Cr'):
+        model.add(Cropping2D(cropping=((cr, cr), (cr, cr))))
+    elif(ly=='F'):
+        model.add(Flatten())
 
-      elif(ly='O'):
-          model.add(Dense(nc, activation='softmax)
+    elif(ly=='O'):
+        model.add(Dense(nc, activation='softmax'))
 
-      saveModelJSON(model, 'dr_nn1')
-      return model
+  saveModelJSON(model, 'dr_nn1')
+  return model
 
 
 @staticmethod
@@ -108,20 +112,21 @@ def zhang_network(nc,b=48,h=99,w=99,fn='relu'):
 
 #A ModelFactory would be nice
 #def dr_network(name,nc=2,b=48,h=99,w=99,fn='relu'):
-def dr_network():
+def dr_network(size=64, b=60, fn='relu', nc=2):
     #add dropouts
     model = Sequential()
-    model.add(Conv2D(b, (4, 4), input_shape=(64, 64, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Conv2D(b, (4, 4), input_shape=(size, size, 3), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     #flatten here?
-    model.add(Conv2D(b, (5, 5), input_shape=(28, 28, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Conv2D(b, (5, 5), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(b, (3, 3), input_shape=(12, 12, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Conv2D(b, (3, 3), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(b, (2, 2), input_shape=(4, 4, 3), activation=fn, kernel_constraint=maxnorm(3)))
+    model.add(Conv2D(b, (2, 2), activation=fn, kernel_constraint=maxnorm(3)))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.33))
-    model.add(Dense(200, activation='relu', kernel_constraint=maxnorm(3)))
+    model.add(Flatten())
+    model.add(Dense(400, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dense(nc, activation='softmax'))
 
     #saveModelJSON(model, 'dr_nn1')
