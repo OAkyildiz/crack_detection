@@ -39,14 +39,15 @@ from keras.preprocessing.image import ImageDataGenerator
     #  fill_mode='nearest',
     #  cval=0.,
     #  horizontal_flip=False,
-    #  vertical_flip=False,
+    #  vertical_flip=False,python static l
     #  rescale=None,
     #  preprocessing_function=None,
     #  data_format=K.image_data_format()
-
-train_ready_gen = ImageDataGenerator(rescale=1./255,)
+ 
+test_datagen = ImageDataGenerator(rescale=1./255,)
 
 train_prep_gen = ImageDataGenerator(
+ rescale=1./255,
         rotation_range=40,
         width_shift_range=0.2,
         height_shift_range=0.2,
@@ -67,16 +68,12 @@ nb_validation_samples = 800
 epochs = 50
 batch_size = 16
 
-test_datagen = ImageDataGenerator(rescale=1. / 255)
-###
-#
-# MODEL was here
-#
-###
-train_generator = train_datagen.flow_from_directory(
-    train_data_dir,
-    target_size=(img_width, img_height),
-    batch_size=batch_size,
+
+def MakeBinaryTrainGen(self,dir, d,b):
+ return prep_gen.flow_from_directory(
+    dir,
+    target_size=(d,d),
+    batch_size=b,
     class_mode='binary')
 
 validation_generator = test_datagen.flow_from_directory(
