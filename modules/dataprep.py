@@ -24,14 +24,38 @@ from keras.preprocessing.image import ImageDataGenerator
  #         negative/
  #             crack_4jpg
  #             crack_2.jpg
- #             ...
+ #
+ #            ...featurewise_center=False,
+    #  samplewise_center=False,
+    #  featurewise_std_normalization=False,
+    #  samplewise_std_normalization=False,
+    #  zca_whitening=False,
+    #  rotation_range=0.,
+    #  width_shift_range=0.,
+    #  height_shift_range=0.,
+    #  shear_range=0.,
+    #  zoom_range=0.,
+    #  channel_shift_range=0.,
+    #  fill_mode='nearest',
+    #  cval=0.,
+    #  horizontal_flip=False,
+    #  vertical_flip=False,
+    #  rescale=None,
+    #  preprocessing_function=None,
+    #  data_format=K.image_data_format()
 
-def gen_set(folder, )
-train_datagen = ImageDataGenerator(
-    rescale=1. / 255,
-    shear_range=0.2,
-    zoom_range=0.2,
-    horizontal_flip=True)
+train_ready_gen = ImageDataGenerator(rescale=1./255,)
+
+train_prep_gen = ImageDataGenerator(
+        rotation_range=40,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True,
+        fill_mode='nearest')
+
+#save_to_dir='preview', save_prefix='cat', save_format='jpeg'
 
 # this is the augmentation configuration we will use for testing:
 # only rescaling
@@ -42,11 +66,6 @@ nb_train_samples = 2000
 nb_validation_samples = 800
 epochs = 50
 batch_size = 16
-
-if K.image_data_format() == 'channels_first':
-    input_shape = (3, img_width, img_height)
-else:
-input_shape = (img_width, img_height, 3)
 
 test_datagen = ImageDataGenerator(rescale=1. / 255)
 ###
@@ -72,6 +91,3 @@ model.fit_generator(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=nb_validation_samples // batch_size)
-
-
-    

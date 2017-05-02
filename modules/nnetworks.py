@@ -124,7 +124,7 @@ def dr_network():
     model.add(Dense(200, activation='relu', kernel_constraint=maxnorm(3)))
     model.add(Dense(nc, activation='softmax'))
 
-    saveModelJSON(model, 'dr_nn1')
+    #saveModelJSON(model, 'dr_nn1')
     return model
 
 
