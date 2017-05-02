@@ -35,17 +35,17 @@ def onlinePrediction(model,source=0, show_source=True, output='output.avi'):
   #fourcc = cv2.VideoWriter_fourcc(*'X264')# I want .h264. Maybe parameterize
   #out = cv2.VideoWriter(output,fourcc, fps, (h,w)) #Thread 3, #rename out,output
   #thread inits?
-  #cv2.namedWindow('Predictor Output')
-  #cv2.namedWindow('Source Video')
+  cv2.namedWindow('Predictor Output')
+  cv2.namedWindow('Source Video')
   #cv2.moveWindow('Predictor Output', 800, 0)
 
   #You didnt think of multiple detections!
-
   while(True):
     # Capture frame-by-frame
     ret, rawframe = cap.read()
-    from os import listdir
-    print(listdir('.'))
+
+    #print(listdir('.'))
+    #print(ret)
     if ret:
         # Thread 1:
         #lbl, loc=predictWithModel(rawframe)
@@ -80,7 +80,7 @@ def onlineMultiModelPrediciton():
 
 def main():
   vid='berlin2.mp4'
-  onlinePrediction(0,vid)
+  onlinePrediction(0,0)
 
 if __name__ == "__main__":
       exit(main())
